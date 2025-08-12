@@ -29,7 +29,6 @@ body {
   align-items: center;
   background: var(--row-bg);
   padding: 10px 20px;
-  justify-content: space-between;
 }
 .logo-text {
   font-size: 20px;
@@ -41,6 +40,7 @@ body {
 .nav-links {
   display: flex;
   align-items: center;
+  margin-left: 30px;
   gap: 20px;
 }
 .nav-links a {
@@ -78,34 +78,22 @@ body {
   display: block;
 }
 
-/* Search */
+/* Search bar */
 .search-container {
-  background-color: var(--bg);
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
+  padding: 10px 20px;
+  background: var(--row-bg);
 }
 .search-container input {
-  background: transparent;
+  width: 250px;
+  padding: 6px 10px;
+  border-radius: 6px;
   border: none;
   outline: none;
-  color: white;
-  font-style: italic;
 }
-#no-result {
-  color: #d9534f;
-  margin: 8px 20px;
+#error-message {
+  color: red;
+  margin-top: 5px;
   font-size: 14px;
-  opacity: 0;
-  height: 0;
-  overflow: hidden;
-  transition: opacity 0.3s ease, height 0.3s ease;
-}
-#no-result.show {
-  opacity: 1;
-  height: auto;
 }
 
 /* Category bar */
@@ -136,6 +124,11 @@ body {
   padding: 10px;
   border-radius: 8px;
   margin: 8px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.rank-row:hover {
+  background: #20242e;
 }
 .rank-number {
   font-weight: bold;
@@ -183,6 +176,57 @@ body {
   font-size: 12px;
   background: var(--pill-bg);
 }
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal {
+  background: var(--row-bg);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+.modal img {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+}
+.modal h2 {
+  margin: 10px 0;
+}
+.modal .region {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.modal .tiers {
+  justify-content: center;
+}
+.modal-close {
+  background: var(--pill-bg);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}
+.modal-close:hover {
+  background: #3a3e4a;
+}
+
+@keyframes fadeIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -199,10 +243,13 @@ body {
         <a href="https://discord.gg/6S6cq6eGR7" target="_blank">Vanilla</a>
       </div>
     </div>
-    <div class="search-container">
-      🔍 <input type="text" id="search" placeholder="Search player...">
-    </div>
   </div>
+</div>
+
+<!-- Search -->
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Search player...">
+  <div id="error-message"></div>
 </div>
 
 <!-- Category Bar -->
@@ -210,78 +257,134 @@ body {
   <div class="category active">Overall</div>
 </div>
 
-<div id="no-result">Player does not exist</div>
-
 <!-- Leaderboard -->
 <div id="leaderboard"></div>
 
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <img id="modalAvatar" src="">
+    <h2 id="modalName"></h2>
+    <div class="region" id="modalRegion"></div>
+    <div id="modalPoints"></div>
+    <div class="tiers" id="modalTiers"></div>
+    <br>
+    <button class="modal-close" id="closeModal">Close</button>
+  </div>
+</div>
+
 <script>
 const players = [
-  { name: "intalic", points: 15, region: "NA", avatar: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&headOnly=true&ratio=50", tiers: ["HT3"] },
-  { name: "SupremeCreeem", points: 11, region: "NA", avatar: "https://render.skinmc.net/3d.php?user=c0f3cff0-29fe-43a6-b430-b6643e22daaf&headOnly=true&ratio=50", tiers: ["LT3"] },
-  { name: "ClemintimeMan", title: "Combat Master", points: 2, region: "NA", avatar: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&headOnly=true&ratio=50", tiers: ["HT5"] }
+  {
+    name: "intalic",
+    points: 15,
+    region: "NA",
+    avatar: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&headOnly=true&ratio=50",
+    tiers: ["HT3"]
+  },
+  {
+    name: "SupremeCreeem",
+    points: 11,
+    region: "NA",
+    avatar: "https://render.skinmc.net/3d.php?user=c0f3cff0-29fe-43a6-b430-b6643e22daaf&headOnly=true&ratio=50",
+    tiers: ["LT3"]
+  },
+  {
+    name: "ClemintimeMan",
+    title: "Combat Master",
+    points: 2,
+    region: "NA",
+    avatar: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&headOnly=true&ratio=50",
+    tiers: ["HT5"]
+  }
 ];
 
-function renderLeaderboard(data) {
-  const leaderboard = document.getElementById("leaderboard");
-  leaderboard.innerHTML = "";
-  data.forEach((p, i) => {
-    const row = document.createElement("div");
-    row.className = "rank-row";
-    
-    const rankNum = document.createElement("div");
-    rankNum.className = "rank-number";
-    if (i === 0) rankNum.classList.add("gold");
-    else if (i === 1) rankNum.classList.add("silver");
-    else if (i === 2) rankNum.classList.add("bronze");
-    rankNum.textContent = i + 1;
-    
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.innerHTML = `<img src="${p.avatar}">`;
-    
-    const info = document.createElement("div");
-    info.className = "player-info";
-    info.innerHTML = `<div class="player-name">${p.name}</div><div class="player-title">${p.title || ''} (${p.points} points)</div>`;
-    
-    const region = document.createElement("div");
-    region.className = `region ${p.region.toLowerCase()}`;
-    region.textContent = p.region;
-    
-    const tiers = document.createElement("div");
-    tiers.className = "tiers";
-    p.tiers.forEach(t => {
-      const tier = document.createElement("div");
-      tier.className = "tier";
-      tier.textContent = t;
-      tiers.appendChild(tier);
-    });
-    
-    row.appendChild(rankNum);
-    row.appendChild(avatar);
-    row.appendChild(info);
-    row.appendChild(region);
-    row.appendChild(tiers);
-    
-    leaderboard.appendChild(row);
+const leaderboard = document.getElementById("leaderboard");
+const modalOverlay = document.getElementById("modalOverlay");
+const modalName = document.getElementById("modalName");
+const modalAvatar = document.getElementById("modalAvatar");
+const modalRegion = document.getElementById("modalRegion");
+const modalPoints = document.getElementById("modalPoints");
+const modalTiers = document.getElementById("modalTiers");
+const errorMessage = document.getElementById("error-message");
+
+function openModal(player) {
+  modalAvatar.src = player.avatar;
+  modalName.textContent = player.name;
+  modalRegion.textContent = player.region;
+  modalRegion.className = "region " + player.region.toLowerCase();
+  modalPoints.textContent = `Points: ${player.points}`;
+  modalTiers.innerHTML = "";
+  player.tiers.forEach(t => {
+    const tierDiv = document.createElement("div");
+    tierDiv.className = "tier";
+    tierDiv.textContent = t;
+    modalTiers.appendChild(tierDiv);
   });
+  modalOverlay.style.display = "flex";
 }
 
-document.getElementById("search").addEventListener("input", function() {
-  const term = this.value.toLowerCase();
-  const filtered = players.filter(p => p.name.toLowerCase().includes(term));
-  const message = document.getElementById("no-result");
-
-  if (filtered.length === 0 && term.trim() !== "") {
-    message.classList.add("show");
-  } else {
-    message.classList.remove("show");
-  }
-
-  renderLeaderboard(filtered);
+document.getElementById("closeModal").addEventListener("click", () => {
+  modalOverlay.style.display = "none";
 });
 
-renderLeaderboard(players);
+// Render leaderboard
+players.forEach((p, i) => {
+  const row = document.createElement("div");
+  row.className = "rank-row";
+  
+  const rankNum = document.createElement("div");
+  rankNum.className = "rank-number";
+  if (i === 0) rankNum.classList.add("gold");
+  else if (i === 1) rankNum.classList.add("silver");
+  else if (i === 2) rankNum.classList.add("bronze");
+  rankNum.textContent = i + 1;
+  
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.innerHTML = `<img src="${p.avatar}">`;
+  
+  const info = document.createElement("div");
+  info.className = "player-info";
+  info.innerHTML = `<div class="player-name">${p.name}</div><div class="player-title">${p.title || ''} (${p.points} points)</div>`;
+  
+  const region = document.createElement("div");
+  region.className = `region ${p.region.toLowerCase()}`;
+  region.textContent = p.region;
+  
+  const tiers = document.createElement("div");
+  tiers.className = "tiers";
+  p.tiers.forEach(t => {
+    const tier = document.createElement("div");
+    tier.className = "tier";
+    tier.textContent = t;
+    tiers.appendChild(tier);
+  });
+  
+  row.appendChild(rankNum);
+  row.appendChild(avatar);
+  row.appendChild(info);
+  row.appendChild(region);
+  row.appendChild(tiers);
+  
+  row.addEventListener("click", () => openModal(p));
+  
+  leaderboard.appendChild(row);
+});
+
+// Search functionality
+document.getElementById("searchInput").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const query = e.target.value.trim().toLowerCase();
+    const player = players.find(p => p.name.toLowerCase() === query);
+    if (player) {
+      errorMessage.textContent = "";
+      openModal(player);
+    } else {
+      errorMessage.textContent = "Player does not exist";
+    }
+  }
+});
 </script>
 
 </body>
