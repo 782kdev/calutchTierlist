@@ -43,10 +43,11 @@ body {
   margin-bottom: 10px;
   padding: 8px;
   border-radius: 8px;
-  transition: background 0.2s;
 }
-.rank-row:hover {
-  background: #2b2f3a;
+.rank-number {
+  width: 30px;
+  text-align: center;
+  font-weight: bold;
 }
 .avatar img {
   width: 40px;
@@ -74,122 +75,73 @@ body {
   padding: 12px;
   color: var(--muted);
 }
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 10;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  align-items: center;
-  justify-content: center;
-}
-.details-content {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-.details-content img {
-  width: 100px;
-  height: 100px;
-}
-.details-tier {
-  display: inline-block;
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: var(--pill-bg);
-  color: var(--muted);
-  font-weight: 700;
-  margin-top: 8px;
-}
 </style>
 </head>
 <body>
-
 <div class="header">
   <h1>Leaderboard</h1>
-  <div class="search"><input type="text" placeholder="Search player..." id="searchInput"></div>
+  <div class="search"><input type="text" placeholder="Search player..."></div>
 </div>
-
 <div class="rank-list" id="rankList"></div>
 <div id="noResults" style="display:none;">Player does not exist</div>
 
-<!-- Details Modal -->
-<div class="modal" id="detailsModal">
-  <div class="details-content">
-    <img id="detailsSkin" src="" alt="Player Skin">
-    <h3 id="detailsName"></h3>
-    <div class="region" id="detailsRegion"></div>
-    <div class="details-tier" id="detailsTier"></div>
-  </div>
-</div>
-
 <script>
-// 🔹 EDIT THIS ARRAY ONLY 🔹
+// Easy to edit player list
 const players = [
   { username: "intalic", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "HT3" },
-  { username: "examplePlayer", region: "EU", skinUrl: "https://example.com/skin.png", tier: "Gold" }
+  { username: "player2", region: "EU", skinUrl: "https://render.skinmc.net/3d.php?user=player2uuid&headOnly=true&ratio=50", tier: "HT1" },
+  { username: "player3", region: "AS", skinUrl: "https://render.skinmc.net/3d.php?user=player3uuid&headOnly=true&ratio=50", tier: "LT1" }
 ];
-// 🔹 STOP EDITING BELOW 🔹
 
+// Tier priority
+const tierOrder = ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"];
+
+// Sort players by tier order
+players.sort((a, b) => tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier));
+
+// DOM elements
 const rankList = document.getElementById('rankList');
-const searchInput = document.getElementById('searchInput');
+const searchInput = document.querySelector('.search input');
 const noResults = document.getElementById('noResults');
-const detailsModal = document.getElementById('detailsModal');
-const detailsSkin = document.getElementById('detailsSkin');
-const detailsName = document.getElementById('detailsName');
-const detailsRegion = document.getElementById('detailsRegion');
-const detailsTier = document.getElementById('detailsTier');
 
-// Render all players
-function renderPlayers(list) {
+// Function to render leaderboard
+function renderLeaderboard(list) {
   rankList.innerHTML = '';
-  list.forEach(player => {
+  if (list.length === 0) {
+    noResults.style.display = 'block';
+    return;
+  }
+  noResults.style.display = 'none';
+  list.forEach((player, index) => {
     const row = document.createElement('div');
     row.className = 'rank-row';
     row.innerHTML = `
+      <div class="rank-number">${index + 1}</div>
       <div class="avatar"><img src="${player.skinUrl}" alt="${player.username} skin"></div>
       <div class="player-meta">
         <div class="player-name">${player.username} <span class="region">${player.region}</span></div>
       </div>
       <div class="tiers"><div class="tier">${player.tier}</div></div>
     `;
-    row.addEventListener('click', () => showDetails(player));
     rankList.appendChild(row);
   });
 }
 
-function showDetails(player) {
-  detailsSkin.src = player.skinUrl;
-  detailsName.textContent = player.username;
-  detailsRegion.textContent = player.region;
-  detailsTier.textContent = player.tier;
-  detailsModal.style.display = 'flex';
-}
+// Initial display
+renderLeaderboard(players);
 
-// Search
-searchInput.addEventListener('keydown', e => {
+// Search functionality
+searchInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
     const query = searchInput.value.trim().toLowerCase();
-    if (!query) return;
-    const found = players.filter(p => p.username.toLowerCase() === query);
-    if (found.length > 0) {
-      renderPlayers(found);
-      noResults.style.display = 'none';
-    } else {
-      rankList.innerHTML = '';
-      noResults.style.display = 'block';
+    if (!query) {
+      renderLeaderboard(players);
+      return;
     }
+    const filtered = players.filter(p => p.username.toLowerCase() === query);
+    renderLeaderboard(filtered);
   }
 });
-
-// Modal close
-detailsModal.addEventListener('click', e => {
-  if (e.target === detailsModal) detailsModal.style.display = 'none';
-});
-
-// Initial render
-renderPlayers(players);
 </script>
 </body>
 </html>
