@@ -1,108 +1,425 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clutch Tierlist</title>
-<style>
-    body {
-        background-color: #0f1218;
-        color: white;
-        font-family: Arial, sans-serif;
-        margin: 0;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rankings — Mock</title>
+
+  <!-- Google font (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0f1720;
+      --panel:#0f2430;
+      --muted:#9aa6b2;
+      --accent:#ffd166;
+      --glass: rgba(255,255,255,0.03);
+      --card:#0b1320;
+      --pill-bg: rgba(255,255,255,0.03);
+      --green:#2dd4bf;
+      --red:#ff6b6b;
     }
-    /* Navbar */
-    .navbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 20px;
-        background-color: #0f1218;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Inter",system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(180deg,#071018 0%, #07161c 100%);
+      color:#dbe6ef;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+    }
+
+    /* Top navigation */
+    .topbar {
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:22px;
     }
     .logo {
-        background-color: #007bff; /* Blue box */
-        color: black;
-        font-weight: bold;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 20px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      letter-spacing:1px;
+      color:var(--accent);
     }
-    .navbar-center a {
-        color: white;
-        margin: 0 15px;
-        text-decoration: none;
-        font-weight: 500;
+    .logo svg { width:42px; height:28px; transform:translateY(-1px) }
+    .nav-right {
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
-    .navbar-right input {
-        padding: 5px;
-        border-radius: 5px;
-        border: none;
+    .search {
+      background:var(--glass);
+      padding:8px 12px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:220px;
     }
+    .search input{
+      background:transparent;
+      border:0;
+      outline:0;
+      color:inherit;
+      font-size:14px;
+      width:160px;
+    }
+    .nav-links { display:flex; gap:14px; align-items:center; color:var(--muted); font-weight:600; }
+    .nav-links a{ text-decoration:none; color:inherit; padding:6px 10px; border-radius:8px; transition:all .15s }
+    .nav-links a:hover{ background:rgba(255,255,255,0.03); color:#fff }
+
     /* Tabs */
     .tabs {
-        display: flex;
-        gap: 10px;
-        padding: 15px;
-        background-color: #121621;
+      display:flex;
+      gap:8px;
+      margin:18px 0 22px 0;
     }
-    .tab {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        background-color: transparent;
+    .tab{
+      background:var(--panel);
+      padding:10px 14px;
+      border-radius:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      color:var(--muted);
+      font-weight:700;
+      cursor:pointer;
+      transition:all .15s;
     }
-    .tab.active {
-        background-color: #1e2433;
-        border-bottom: 3px solid orange;
+    .tab.active{
+      background: linear-gradient(90deg, rgba(255,209,102,0.12), rgba(255,209,102,0.04));
+      color:var(--accent);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35) inset;
     }
-    /* Server Info */
-    .server-info {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 20px;
-        background-color: #10141f;
+    .tab svg { opacity:0.95 }
+
+    /* Page layout */
+    .container{
+      max-width:1180px;
+      margin:0 auto;
     }
-    .info-btn {
-        background-color: #1f2536;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      padding:18px;
+      border-radius:12px;
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6);
     }
-</style>
+
+    /* Leaderboard header */
+    .leaderboard-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .leaderboard-title{ display:flex; gap:12px; align-items:center; }
+    .lead-h1{
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:0.2px;
+    }
+    .lead-sub{ color:var(--muted); font-size:13px }
+
+    /* Rank list */
+    .rank-list { margin-top:10px }
+    .rank-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:14px;
+      border-radius:10px;
+      margin-bottom:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .rank-row:hover{ transform:translateY(-4px); box-shadow: 0 12px 30px rgba(2,6,23,0.6); transition:all .18s }
+
+    .rank-badge{
+      width:64px; height:64px;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:10px; font-weight:800;
+      color:#0b1220;
+      background: linear-gradient(180deg,#ffd166,#ffb347);
+      font-size:20px;
+      flex-shrink:0;
+    }
+    .rank-info{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex:1;
+    }
+    .avatar{
+      width:56px; height:56px; border-radius:10px; overflow:hidden;
+      background:linear-gradient(180deg,#0b1320,#062032);
+      display:flex; align-items:center; justify-content:center;
+      border:1px solid rgba(255,255,255,0.03);
+      flex-shrink:0;
+    }
+    .avatar img{ width:100%; height:100%; object-fit:cover; display:block }
+
+    .player-meta{
+      display:flex;
+      flex-direction:column;
+    }
+    .player-name{ font-size:18px; font-weight:700; color:#e6f3ff }
+    .player-sub{ color:var(--muted); font-size:13px }
+
+    .region{
+      min-width:56px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:6px 8px;
+      border-radius:8px;
+      background:var(--pill-bg);
+      color:var(--muted);
+      font-weight:700;
+      margin-left:8px;
+    }
+
+    .tiers{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .tier {
+      width:36px; height:36px;
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+      border:1px solid rgba(255,255,255,0.03);
+      font-weight:700;
+      font-size:12px;
+      color:var(--muted);
+      position:relative;
+    }
+    .tier .small {
+      position:absolute;
+      bottom:-8px;
+      right:-8px;
+      background:var(--accent);
+      color:#071217;
+      padding:1px 5px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:800;
+      box-shadow:0 6px 12px rgba(0,0,0,0.4);
+    }
+
+    /* small screens */
+    @media (max-width:880px){
+      body{ padding:14px }
+      .container{ padding:0 8px }
+      .rank-row{ flex-direction:column; align-items:flex-start }
+      .rank-badge{ width:52px; height:52px; font-size:16px }
+      .region{ margin-left:0 }
+      .tiers{ flex-wrap:wrap }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header class="topbar">
+      <div class="logo" aria-hidden="true">
+        <!-- small logo svg -->
+        <svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="0" y="0" width="64" height="32" rx="6" fill="#0b1220"/>
+          <g transform="translate(6,4)" fill="#ffd166">
+            <rect width="8" height="20" rx="2"></rect>
+            <rect x="12" width="16" height="20" rx="2"></rect>
+            <rect x="30" width="8" height="20" rx="2"></rect>
+          </g>
+        </svg>
+        METIERS
+      </div>
 
-<!-- Navbar -->
-<div class="navbar">
-    <div class="logo">Clutch TierList</div>
-    <div class="navbar-center">
+      <nav class="nav-links" aria-label="main navigation">
         <a href="#">Home</a>
         <a href="#">Rankings</a>
-        <a href="#">Discords ▼</a>
+        <a href="#">Discords</a>
+      </nav>
+
+      <div class="nav-right">
+        <div class="search" role="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:.8">
+            <path d="M21 21l-4.35-4.35" stroke="#9aa6b2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11" cy="11" r="6" stroke="#9aa6b2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input placeholder="Search player..." aria-label="Search player"/>
+        </div>
+      </div>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="modes">
+      <div class="tab active" role="tab" aria-selected="true">
+        <!-- trophy -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 2h8v2a4 4 0 0 1-4 4h0a4 4 0 0 1-4-4V2z" stroke="#ffd166" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Overall
+      </div>
+      <div class="tab" role="tab">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6h6l-5 4 2 6-6-3-6 3 2-6L3 8h6z" stroke="#9aa6b2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        LTMs
+      </div>
+      <div class="tab" role="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#9aa6b2" stroke-width="1.6"/></svg> Vanilla</div>
+      <div class="tab" role="tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v8" stroke="#9aa6b2" stroke-width="1.6"/><path d="M6 8h12" stroke="#9aa6b2" stroke-width="1.6"/></svg> UHC</div>
+      <!-- Add more tabs as needed -->
     </div>
-    <div class="navbar-right">
-        <input type="text" placeholder="Search player...">
-    </div>
-</div>
 
-<!-- Tabs -->
-<div class="tabs">
-    <div class="tab active">🏆 Overall</div>
-    <div class="tab">🔮 Vanilla</div>
-</div>
+    <section class="panel" aria-labelledby="leaderboard-title">
+      <div class="leaderboard-header">
+        <div class="leaderboard-title">
+          <div class="lead-h1" id="leaderboard-title">Rankings — Overall</div>
+          <div class="lead-sub">Top players across all modes</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button style="background:var(--pill-bg); border:0; padding:8px 12px; border-radius:10px; color:var(--muted); font-weight:700">Information</button>
+          <div style="background:var(--panel); padding:6px 10px; border-radius:10px; color:var(--muted); font-weight:700">Server IP: <strong style="color:#fff; margin-left:8px">mcpvp.club</strong></div>
+        </div>
+      </div>
 
-<!-- Server Info -->
-<div class="server-info">
-    <div class="info-btn">ℹ Information</div>
-    <div class="info-btn">PVP CLUB</div>
-    <div class="info-btn">mcpvp.club</div>
-    <div class="info-btn">💬</div>
-</div>
+      <div class="rank-list" id="rankList">
+        <!-- Example row 1 -->
+        <div class="rank-row">
+          <div class="rank-badge">1.</div>
+          <div class="rank-info">
+            <div class="avatar" title="Marlowww avatar">
+              <!-- placeholder avatar -->
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="4" fill="#e6f3ff"/>
+                <circle cx="12" cy="9" r="3" fill="#0b1220"/>
+                <path d="M6 20c1.5-4 10.5-4 12 0" fill="#0b1220"/>
+              </svg>
+            </div>
+            <div class="player-meta">
+              <div class="player-name">Marlowww <span style="font-weight:600; color:var(--muted); font-size:12px; margin-left:8px">Combat Grandmaster</span></div>
+              <div class="player-sub">405 points</div>
+            </div>
+            <div class="region" aria-hidden="true">NA</div>
+          </div>
 
+          <div class="tiers">
+            <div class="tier" title="Sword"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21l6-6" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="SMP"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="Vanilla"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT1</span></div>
+            <div class="tier" title="UHC"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v8" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT1</span></div>
+            <div class="tier" title="Potions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 3h10l-2 7a5 5 0 01-6 0L7 3z" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT1</span></div>
+            <div class="tier" title="NethOP"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT1</span></div>
+          </div>
+        </div>
+
+        <!-- Example row 2 -->
+        <div class="rank-row">
+          <div class="rank-badge" style="background:linear-gradient(180deg,#cfd8ff,#9fb4ff); color:#071224">2.</div>
+          <div class="rank-info">
+            <div class="avatar" title="ItzRealMe avatar">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="4" fill="#9fb4ff"/>
+                <rect x="6" y="6" width="12" height="12" rx="2" fill="#07304b"/>
+              </svg>
+            </div>
+            <div class="player-meta">
+              <div class="player-name">ItzRealMe <span style="font-weight:600; color:var(--muted); font-size:12px; margin-left:8px">Combat Master</span></div>
+              <div class="player-sub">330 points</div>
+            </div>
+            <div class="region">NA</div>
+          </div>
+
+          <div class="tiers">
+            <div class="tier" title="Potions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 3h10l-2 7a5 5 0 01-6 0L7 3z" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="NethOP"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="Vanilla"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="SMP"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="Sword"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21l6-6" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT2</span></div>
+            <div class="tier" title="Axe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 21L20 3" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT2</span></div>
+          </div>
+        </div>
+
+        <!-- Example row 3 -->
+        <div class="rank-row">
+          <div class="rank-badge" style="background:linear-gradient(180deg,#f5c6a5,#f7a07a); color:#071224">3.</div>
+          <div class="rank-info">
+            <div class="avatar" title="Swight avatar">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="4" fill="#fff"/>
+                <path d="M4 20c0-4 16-4 16 0" fill="#0b1220"/>
+                <circle cx="12" cy="10" r="3" fill="#0b1220"/>
+              </svg>
+            </div>
+            <div class="player-meta">
+              <div class="player-name">Swight <span style="font-weight:600; color:var(--muted); font-size:12px; margin-left:8px">Combat Master</span></div>
+              <div class="player-sub">260 points</div>
+            </div>
+            <div class="region">NA</div>
+          </div>
+
+          <div class="tiers">
+            <div class="tier" title="UHC"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v8" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT1</span></div>
+            <div class="tier" title="Potions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 3h10l-2 7a5 5 0 01-6 0L7 3z" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT2</span></div>
+            <div class="tier" title="Vanilla"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">LT2</span></div>
+            <div class="tier" title="Axe"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 21L20 3" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">HT3</span></div>
+          </div>
+        </div>
+
+        <!-- more rows could be generated here -->
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Simple JS to make tabs interactive and to demonstrate adding rows dynamically.
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.addEventListener('click', e=>{
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        // You could fetch different data per tab here. For demo we don't change content.
+      });
+    });
+
+    // Example: function to append a new row (could be wired to fetch)
+    function addRow(rank, name, title, points, region, badges){
+      const container = document.getElementById('rankList');
+      const row = document.createElement('div');
+      row.className = 'rank-row';
+      row.innerHTML = `
+        <div class="rank-badge">${rank}.</div>
+        <div class="rank-info">
+          <div class="avatar" title="${name} avatar">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+              <rect width="24" height="24" rx="4" fill="#cfd8ff"/>
+            </svg>
+          </div>
+          <div class="player-meta">
+            <div class="player-name">${name} <span style="font-weight:600; color:var(--muted); font-size:12px; margin-left:8px">${title}</span></div>
+            <div class="player-sub">${points} points</div>
+          </div>
+          <div class="region">${region}</div>
+        </div>
+      `;
+      const tiers = document.createElement('div');
+      tiers.className = 'tiers';
+      (badges||[]).forEach(b=>{
+        const t = document.createElement('div');
+        t.className = 'tier';
+        t.title = b.name;
+        t.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#9aa6b2" stroke-width="1.6"/></svg><span class="small">${b.level}</span>`;
+        tiers.appendChild(t);
+      });
+      row.appendChild(tiers);
+      container.appendChild(row);
+    }
+
+    // example usage:
+    // addRow(4, 'coldified', 'Champion', 220, 'EU', [{name:'Potions', level:'LT2'},{name:'Sword', level:'LT1'}]);
+  </script>
 </body>
 </html>
