@@ -96,7 +96,6 @@ button {
 .admin-visible #addPlayerBtn {
   display: inline-block;
 }
-/* Modal base */
 .modal {
   display: none;
   position: fixed;
@@ -126,7 +125,6 @@ button {
   padding: 6px 10px;
   border-radius: 6px;
 }
-/* Details modal */
 .details-content {
   background: var(--card-bg);
   padding: 20px;
@@ -146,6 +144,11 @@ button {
   font-weight: 700;
   margin-top: 8px;
 }
+#noResults {
+  text-align: center;
+  padding: 12px;
+  color: var(--muted);
+}
 </style>
 </head>
 <body>
@@ -156,6 +159,7 @@ button {
 </div>
 <button id="addPlayerBtn">Add Player</button>
 <div class="rank-list" id="rankList"></div>
+<div id="noResults" style="display:none;">Player does not exist</div>
 
 <!-- Add/Edit Player Modal -->
 <div class="modal" id="playerModal">
@@ -183,31 +187,49 @@ button {
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// Replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MSG_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASURE_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Elements
 const addBtn = document.getElementById('addPlayerBtn');
 const modal = document.getElementById('playerModal');
 const saveBtn = document.getElementById('savePlayer');
 const rankList = document.getElementById('rankList');
 const modalTitle = document.getElementById('modalTitle');
-
 const detailsModal = document.getElementById('detailsModal');
 const detailsSkin = document.getElementById('detailsSkin');
 const detailsName = document.getElementById('detailsName');
 const detailsRegion = document.getElementById('detailsRegion');
 const detailsTier = document.getElementById('detailsTier');
-
 const searchInput = document.querySelector('.search input');
 const adminBtn = document.getElementById('adminBtn');
+const noResults = document.getElementById('noResults');
 
-let editIndex = null;
+let editId = null;
 
-function renderPlayers() {
+// Real-time listener
+onSnapshot(collection(db, "players"), snapshot => {
   rankList.innerHTML = '';
-  const players = JSON.parse(localStorage.getItem('players') || '[]');
-  if(players.length === 0){
+  if (snapshot.empty) {
     rankList.innerHTML = '<div style="color:#9aa6b2;text-align:center;padding:12px;">No players yet</div>';
   } else {
-    players.forEach((player, index)=>{
+    snapshot.forEach(docSnap => {
+      const player = docSnap.data();
       const row = document.createElement('div');
       row.className = 'rank-row';
       row.innerHTML = `
@@ -217,48 +239,67 @@ function renderPlayers() {
         </div>
         <div class="tiers"><div class="tier">${player.tier}</div></div>
         <div class="actions">
-          <button onclick="editPlayer(${index});event.stopPropagation();">✏️</button>
-          <button onclick="removePlayer(${index});event.stopPropagation();">🗑️</button>
+          <button onclick="editPlayer('${docSnap.id}');event.stopPropagation();">✏️</button>
+          <button onclick="removePlayer('${docSnap.id}');event.stopPropagation();">🗑️</button>
         </div>
       `;
       row.addEventListener('click', () => showDetails(player));
       rankList.appendChild(row);
     });
   }
-}
+});
 
-function openModal(edit=false){
-  modal.style.display='flex';
-  if(edit){
-    modalTitle.textContent = 'Edit Player';
-  } else {
-    modalTitle.textContent = 'Add Player';
-    document.getElementById('username').value='';
-    document.getElementById('skinUrl').value='';
-    document.getElementById('crystalTier').value='';
-    document.getElementById('region').value='NA';
+// Show modal
+function openModal(edit=false) {
+  modal.style.display = 'flex';
+  modalTitle.textContent = edit ? 'Edit Player' : 'Add Player';
+  if (!edit) {
+    document.getElementById('username').value = '';
+    document.getElementById('skinUrl').value = '';
+    document.getElementById('crystalTier').value = '';
+    document.getElementById('region').value = 'NA';
   }
 }
 
-function editPlayer(index){
-  const players = JSON.parse(localStorage.getItem('players') || '[]');
-  const player = players[index];
-  editIndex = index;
-  document.getElementById('username').value=player.username;
-  document.getElementById('region').value=player.region;
-  document.getElementById('skinUrl').value=player.skinUrl;
-  document.getElementById('crystalTier').value=player.tier;
-  openModal(true);
+// Add/Edit Player
+window.editPlayer = async function(id) {
+  const docs = await getDocs(collection(db, "players"));
+  docs.forEach(docSnap => {
+    if (docSnap.id === id) {
+      const player = docSnap.data();
+      document.getElementById('username').value = player.username;
+      document.getElementById('region').value = player.region;
+      document.getElementById('skinUrl').value = player.skinUrl;
+      document.getElementById('crystalTier').value = player.tier;
+      editId = id;
+      openModal(true);
+    }
+  });
 }
 
-function removePlayer(index){
-  const players = JSON.parse(localStorage.getItem('players') || '[]');
-  players.splice(index, 1);
-  localStorage.setItem('players', JSON.stringify(players));
-  renderPlayers();
-}
+saveBtn.addEventListener('click', async () => {
+  const username = document.getElementById('username').value.trim();
+  const region = document.getElementById('region').value;
+  const skinUrl = document.getElementById('skinUrl').value.trim();
+  const tier = document.getElementById('crystalTier').value.trim();
+  if (!username || !skinUrl || !tier) return alert('Please fill all fields');
 
-function showDetails(player){
+  if (editId) {
+    await updateDoc(doc(db, "players", editId), { username, region, skinUrl, tier });
+    editId = null;
+  } else {
+    await addDoc(collection(db, "players"), { username, region, skinUrl, tier });
+  }
+  modal.style.display = 'none';
+});
+
+// Remove Player
+window.removePlayer = async function(id) {
+  await deleteDoc(doc(db, "players", id));
+};
+
+// Show details
+function showDetails(player) {
   detailsSkin.src = player.skinUrl;
   detailsName.textContent = player.username;
   detailsRegion.textContent = player.region;
@@ -266,74 +307,47 @@ function showDetails(player){
   detailsModal.style.display = 'flex';
 }
 
-addBtn.addEventListener('click', e=>{
-  e.preventDefault();
-  editIndex = null;
-  openModal(false);
-});
-
-saveBtn.addEventListener('click', ()=>{
-  const username = document.getElementById('username').value.trim();
-  const region = document.getElementById('region').value;
-  const skinUrl = document.getElementById('skinUrl').value.trim();
-  const tier = document.getElementById('crystalTier').value.trim();
-
-  if(!username || !skinUrl || !tier) return alert('Please fill all fields');
-
-  const players = JSON.parse(localStorage.getItem('players') || '[]');
-
-  if(editIndex !== null){
-    players[editIndex] = {username, region, skinUrl, tier};
-  } else {
-    players.push({username, region, skinUrl, tier});
-  }
-  localStorage.setItem('players', JSON.stringify(players));
-
-  renderPlayers();
-  modal.style.display='none';
-  editIndex = null;
-});
-
-modal.addEventListener('click', e=>{
-  if(e.target === modal) modal.style.display='none';
-});
-
-detailsModal.addEventListener('click', e=>{
-  if(e.target === detailsModal) detailsModal.style.display='none';
-});
-
-// Search
-searchInput.addEventListener('keydown', function(e){
-  if(e.key === 'Enter'){
-    const query = searchInput.value.trim().toLowerCase();
-    if(!query) return;
-    const players = JSON.parse(localStorage.getItem('players') || '[]');
-    const found = players.find(p => p.username.toLowerCase() === query);
-    if(found){
-      showDetails(found);
+// Search player
+searchInput.addEventListener('keydown', async function(e) {
+  if (e.key === 'Enter') {
+    const queryText = searchInput.value.trim().toLowerCase();
+    if (!queryText) return;
+    const q = query(collection(db, "players"), where("username", "==", queryText));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      snap.forEach(docSnap => showDetails(docSnap.data()));
+      noResults.style.display = 'none';
     } else {
-      alert("Player does not exist");
+      noResults.style.display = 'block';
     }
   }
 });
 
-// Admin
-adminBtn.addEventListener('click', ()=>{
+// Admin mode
+adminBtn.addEventListener('click', () => {
   const pass = prompt("Enter admin password:");
-  if(pass === "clutchadmin112"){
+  if (pass === "clutchadmin112") {
     document.body.classList.add('admin-visible');
     localStorage.setItem('isAdmin', 'true');
   } else {
     alert("Wrong password");
   }
 });
-
-// Keep admin after refresh
-if(localStorage.getItem('isAdmin') === 'true'){
+if (localStorage.getItem('isAdmin') === 'true') {
   document.body.classList.add('admin-visible');
 }
 
-renderPlayers();
+addBtn.addEventListener('click', () => {
+  editId = null;
+  openModal(false);
+});
+
+modal.addEventListener('click', e => {
+  if (e.target === modal) modal.style.display = 'none';
+});
+detailsModal.addEventListener('click', e => {
+  if (e.target === detailsModal) detailsModal.style.display = 'none';
+});
 </script>
 </body>
 </html>
