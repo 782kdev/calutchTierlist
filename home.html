@@ -2,252 +2,143 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Clutch Tierlist Leaderboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clutch Tierlist</title>
 <style>
-:root {
-  --bg: #0f1117;
-  --row-bg: #181b23;
-  --gold: #ffcc33;
-  --silver: #c0c0c0;
-  --bronze: #cd7f32;
-  --na: #d9534f;
-  --eu: #5cb85c;
-  --pill-bg: #2c2f3a;
-  --text-muted: #aaa;
-}
-body {
-  background: var(--bg);
-  color: white;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+  body {
+    background-color: #0d1117;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
 
-/* Top navigation */
-.navbar {
-  display: flex;
-  align-items: center;
-  background: var(--row-bg);
-  padding: 10px 20px;
-}
-.logo-text {
-  font-size: 20px;
-  font-weight: bold;
-  color: #4da3ff; /* bright blue */
-  letter-spacing: 1px;
-  text-shadow: 0 0 6px rgba(77, 163, 255, 0.8), 0 0 12px rgba(77, 163, 255, 0.5);
-}
-.nav-links {
-  display: flex;
-  align-items: center;
-  margin-left: 30px;
-  gap: 20px;
-}
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-.nav-links a:hover {
-  color: var(--gold);
-}
+  header {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #161b22;
+    justify-content: space-between;
+  }
 
-/* Dropdown */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: var(--row-bg);
-  min-width: 160px;
-  z-index: 1;
-  border-radius: 6px;
-}
-.dropdown-content a {
-  color: white;
-  padding: 10px;
-  text-decoration: none;
-  display: block;
-}
-.dropdown-content a:hover {
-  background-color: var(--pill-bg);
-}
-.dropdown:hover .dropdown-content {
-  display: block;
-}
+  .logo {
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(to bottom, #4da3ff, #004aad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: "Minecraftia", sans-serif;
+  }
 
-/* Category bar */
-.category-bar {
-  display: flex;
-  background: var(--row-bg);
-  padding: 8px 20px;
-  gap: 10px;
-}
-.category {
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--pill-bg);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-.category.active {
-  background: var(--gold);
-  color: black;
-}
+  .search-container {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+  }
 
-/* Leaderboard rows */
-.rank-row {
-  display: flex;
-  align-items: center;
-  background: var(--row-bg);
-  padding: 10px;
-  border-radius: 8px;
-  margin: 8px 20px;
-}
-.rank-number {
-  font-weight: bold;
-  width: 40px;
-  text-align: center;
-  font-size: 18px;
-  border-radius: 4px;
-}
-.rank-number.gold { background: var(--gold); color: black; }
-.rank-number.silver { background: var(--silver); color: black; }
-.rank-number.bronze { background: var(--bronze); color: black; }
-.avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-}
-.player-info {
-  flex: 1;
-  margin-left: 10px;
-}
-.player-name {
-  font-weight: bold;
-}
-.player-title {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-.region {
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: bold;
-  color: white;
-  margin-right: 10px;
-}
-.region.na { background: var(--na); }
-.region.eu { background: var(--eu); }
-.tiers {
-  display: flex;
-  gap: 4px;
-}
-.tier {
-  padding: 3px 6px;
-  border-radius: 6px;
-  font-size: 12px;
-  background: var(--pill-bg);
-}
+  .search-container input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-style: italic;
+  }
+
+  #no-result {
+    color: #d9534f;
+    margin: 5px 20px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    height: 0;
+    overflow: hidden;
+  }
+
+  #no-result.show {
+    opacity: 1;
+    height: auto;
+  }
+
+  table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #30363d;
+  }
+
+  th {
+    background-color: #161b22;
+  }
 </style>
 </head>
 <body>
 
-<!-- Top Navigation -->
-<div class="navbar">
-  <div class="logo-text">CLUTCH TIERLIST</div>
-  <div class="nav-links">
-    <a href="#">Home</a>
-    <a href="#">Rankings</a>
-    <div class="dropdown">
-      <a href="#">Discords ▼</a>
-      <div class="dropdown-content">
-        <a href="https://discord.gg/6S6cq6eGR7" target="_blank">Vanilla</a>
-      </div>
-    </div>
+<header>
+  <div class="logo">CLUTCH TIERLIST</div>
+  <div class="search-container">
+    🔍 <input type="text" id="search" placeholder="Search player...">
   </div>
-</div>
+</header>
+<div id="no-result">Player does not exist</div>
 
-<!-- Category Bar -->
-<div class="category-bar">
-  <div class="category active">Overall</div>
-</div>
-
-<!-- Leaderboard -->
-<div id="leaderboard"></div>
+<table id="leaderboard">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Player</th>
+      <th>Region</th>
+      <th>Tier</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 
 <script>
-const players = [
-  {
-    name: "intalic",
-    points: 15,
-    region: "NA",
-    avatar: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&headOnly=true&ratio=50",
-    tiers: ["HT3"]
-  },
-  {
-    name: "SupremeCreeem",
-    points: 11,
-    region: "NA",
-    avatar: "https://render.skinmc.net/3d.php?user=c0f3cff0-29fe-43a6-b430-b6643e22daaf&headOnly=true&ratio=50",
-    tiers: ["LT3"]
-  },
-  {
-    name: "ClemintimeMan",
-    title: "Combat Master",
-    points: 2,
-    region: "NA",
-    avatar: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&headOnly=true&ratio=50",
-    tiers: ["HT5"]
+  const players = [
+    { name: "Steve", region: "NA", tier: "S" },
+    { name: "Alex", region: "EU", tier: "A" },
+    { name: "Notch", region: "NA", tier: "B" }
+  ];
+
+  function renderLeaderboard(data) {
+    const tbody = document.querySelector("#leaderboard tbody");
+    tbody.innerHTML = "";
+    data.forEach((p, index) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${p.name}</td>
+          <td>${p.region}</td>
+          <td>${p.tier}</td>
+        </tr>
+      `;
+    });
   }
-];
 
-const leaderboard = document.getElementById("leaderboard");
+  document.getElementById("search").addEventListener("input", function() {
+    const searchTerm = this.value.toLowerCase();
+    const filtered = players.filter(p => p.name.toLowerCase().includes(searchTerm));
+    const message = document.getElementById("no-result");
 
-players.forEach((p, i) => {
-  const row = document.createElement("div");
-  row.className = "rank-row";
-  
-  const rankNum = document.createElement("div");
-  rankNum.className = "rank-number";
-  if (i === 0) rankNum.classList.add("gold");
-  else if (i === 1) rankNum.classList.add("silver");
-  else if (i === 2) rankNum.classList.add("bronze");
-  rankNum.textContent = i + 1;
-  
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.innerHTML = `<img src="${p.avatar}">`;
-  
-  const info = document.createElement("div");
-  info.className = "player-info";
-  info.innerHTML = `<div class="player-name">${p.name}</div><div class="player-title">${p.title || ''} (${p.points} points)</div>`;
-  
-  const region = document.createElement("div");
-  region.className = `region ${p.region.toLowerCase()}`;
-  region.textContent = p.region;
-  
-  const tiers = document.createElement("div");
-  tiers.className = "tiers";
-  p.tiers.forEach(t => {
-    const tier = document.createElement("div");
-    tier.className = "tier";
-    tier.textContent = t;
-    tiers.appendChild(tier);
+    if (filtered.length === 0 && searchTerm.trim() !== "") {
+      message.classList.add("show");
+    } else {
+      message.classList.remove("show");
+    }
+
+    renderLeaderboard(filtered);
   });
-  
-  row.appendChild(rankNum);
-  row.appendChild(avatar);
-  row.appendChild(info);
-  row.appendChild(region);
-  row.appendChild(tiers);
-  
-  leaderboard.appendChild(row);
-});
+
+  renderLeaderboard(players);
 </script>
 
 </body>
