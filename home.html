@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Leaderboard</title>
+<title>Clutch Tierlist</title>
 <style>
 :root {
   --bg: #0f1117;
+  --nav-bg: #151821;
   --row-bg: #181b23;
   --gold: #ffcc33;
   --silver: #c0c0c0;
@@ -16,19 +17,85 @@
   --text-muted: #aaa;
 }
 body {
+  margin: 0;
   background: var(--bg);
   color: white;
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
 }
+
+/* Top navigation */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--nav-bg);
+  padding: 8px 16px;
+}
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-left img.logo {
+  height: 50px;
+}
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.search {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+}
+.info-btn {
+  background: #222631;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+.server-ip {
+  background: #222631;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+/* Category bar */
+.categories {
+  display: flex;
+  background: var(--row-bg);
+  padding: 6px 12px;
+  gap: 12px;
+}
+.category {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.category img {
+  height: 20px;
+}
+.category.active {
+  background: #1d2230;
+  border-bottom: 2px solid #ffcc33;
+}
+
+/* Leaderboard styles */
 .rank-row {
   display: flex;
   align-items: center;
   background: var(--row-bg);
   padding: 10px;
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin: 8px 12px;
 }
 .rank-number {
   font-weight: bold;
@@ -80,6 +147,36 @@ body {
 </head>
 <body>
 
+<!-- Nav bar -->
+<div class="navbar">
+  <div class="nav-left">
+    <img src="logo.png" class="logo" alt="Clutch Tierlist Logo">
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Rankings</a>
+      <a href="#">Discords</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <input type="text" class="search" placeholder="Search player...">
+    <div class="info-btn">Information</div>
+    <div class="server-ip">mcpvp.club</div>
+  </div>
+</div>
+
+<!-- Categories -->
+<div class="categories">
+  <div class="category active">
+    <img src="icons/overall.png" alt="Overall">
+    <span>Overall</span>
+  </div>
+  <div class="category">
+    <img src="icons/vanilla.png" alt="Vanilla">
+    <span>Vanilla</span>
+  </div>
+</div>
+
+<!-- Leaderboard -->
 <div id="leaderboard"></div>
 
 <script>
