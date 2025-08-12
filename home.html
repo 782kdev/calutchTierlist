@@ -1,156 +1,151 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Rankings — Player Add</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Crystal Leaderboard</title>
 <style>
-:root{
-  --bg:#0f1720;
-  --panel:#0f2430;
-  --muted:#9aa6b2;
-  --accent:#ffd166;
-  --pill-bg: rgba(255,255,255,0.03);
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:"Inter",system-ui;
-  background: linear-gradient(180deg,#071018 0%, #07161c 100%);
-  color:#dbe6ef;
-  padding:28px;
-}
-.topbar {display:flex;align-items:center;gap:18px;margin-bottom:22px;}
-.logo {font-weight:800;color:var(--accent);}
-.nav-right {margin-left:auto;}
-.search {background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:12px;}
-.search input{background:transparent;border:0;outline:0;color:inherit;}
-.tabs {display:flex;gap:8px;margin:18px 0 22px 0;}
-.tab{background:var(--panel);padding:10px 14px;border-radius:12px;color:var(--muted);font-weight:700;cursor:pointer;}
-.tab.active{background: linear-gradient(90deg, rgba(255,209,102,0.12), rgba(255,209,102,0.04));color:var(--accent);}
-.panel{background:rgba(255,255,255,0.01);padding:18px;border-radius:12px;}
-.leaderboard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.lead-h1{font-size:20px;font-weight:800;}
-.lead-sub{color:var(--muted);font-size:13px}
-.rank-list {margin-top:10px}
-.add-btn{
-  display:inline-block;
-  margin-top:12px;
-  background:var(--accent);
-  color:#0f1720;
-  font-weight:700;
-  padding:8px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  text-decoration:none;
-}
-/* Player row */
-.rank-row{
-  display:flex;align-items:center;gap:12px;
-  padding:14px;
-  background:rgba(255,255,255,0.02);
-  border-radius:10px;
-  margin-bottom:10px;
-}
-.avatar{
-  width:56px;height:56px;border-radius:10px;overflow:hidden;flex-shrink:0;
-  background:#222;
-}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.player-meta{flex:1;}
-.player-name{font-size:18px;font-weight:700;color:#e6f3ff;}
-.region{
-  padding:6px 8px;
-  border-radius:8px;
-  background:var(--pill-bg);
-  color:var(--muted);
-  font-weight:700;
-  margin-left:8px;
-}
-.tiers{display:flex;gap:8px;}
-.tier {
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(255,255,255,0.02);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:12px;color:var(--muted);
-  border:1px solid rgba(255,255,255,0.03);
-}
-.actions button{
-  background:var(--panel);
-  border:none;
-  color:var(--muted);
-  padding:6px 10px;
-  margin-left:6px;
-  border-radius:6px;
-  cursor:pointer;
-}
-.actions button:hover{
-  background:rgba(255,255,255,0.05);
-}
-/* Modal form */
-.modal{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.6);
-  display:none;align-items:center;justify-content:center;
-}
-.modal-content{
-  background:#1a2530;padding:20px;border-radius:10px;width:300px;
-}
-.modal-content h2{margin-top:0}
-.modal-content label{display:block;margin:8px 0 4px}
-.modal-content input, .modal-content select{
-  width:100%;padding:6px;border-radius:6px;border:none;
-  margin-bottom:10px;
-}
-.modal-content button{
-  background:var(--accent);color:#0f1720;font-weight:700;
-  padding:8px 12px;border:none;border-radius:6px;cursor:pointer;
-}
+  body {
+    background-color: #0f1720;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 20px;
+    background: #1e293b;
+    border-radius: 10px;
+  }
+  h1 {
+    text-align: center;
+    color: #ffd166;
+  }
+  #addPlayerBtn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: #06d6a0;
+    color: #0f1720;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .rank-row {
+    display: flex;
+    align-items: center;
+    background: #2d3e50;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 8px;
+  }
+  .avatar img {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    margin-right: 12px;
+  }
+  .player-meta {
+    flex: 1;
+  }
+  .player-name {
+    font-weight: bold;
+  }
+  .region {
+    font-size: 12px;
+    color: #9aa6b2;
+    margin-left: 4px;
+  }
+  .tiers {
+    margin-right: 10px;
+  }
+  .tier {
+    background: #ffd166;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #0f1720;
+    font-weight: bold;
+  }
+  .actions button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    margin-left: 5px;
+  }
+  /* Modal styling */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  .modal-content {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+  }
+  .modal-content input, .modal-content select {
+    width: 100%;
+    padding: 8px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 6px;
+  }
+  .modal-content button {
+    padding: 8px 14px;
+    background: #06d6a0;
+    color: #0f1720;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
+
 <div class="container">
-  <header class="topbar">
-    <div class="logo">METIERS</div>
-    <div class="nav-right">
-      <div class="search"><input placeholder="Search player..." /></div>
-    </div>
-  </header>
-  <div class="tabs">
-    <div class="tab active">🏆 Overall</div>
-  </div>
-  <section class="panel">
-    <div class="leaderboard-header">
-      <div>
-        <div class="lead-h1">Rankings — Overall</div>
-        <div class="lead-sub">Top players across all modes</div>
-      </div>
-      <div>
-        <span style="background:var(--panel);padding:6px 10px;border-radius:10px;">Server IP: <b>mcpvp.club</b></span>
-      </div>
-    </div>
-    <div class="rank-list" id="rankList"></div>
-    <a href="#" class="add-btn" id="addPlayerBtn">+ Add Player</a>
-  </section>
+  <h1>Crystal PvP Leaderboard</h1>
+  <button id="addPlayerBtn">Add Player</button>
+  <div id="rankList"></div>
 </div>
 
-<!-- Modal Form -->
-<div class="modal" id="playerModal">
+<!-- Admin Button -->
+<button id="adminBtn" style="
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: #ffd166;
+  color: #0f1720;
+  padding: 8px 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1000;
+">Admin</button>
+
+<!-- Player Modal -->
+<div id="playerModal" class="modal">
   <div class="modal-content">
     <h2 id="modalTitle">Add Player</h2>
-    <label>Username</label>
-    <input type="text" id="username" required>
-    <label>Region</label>
+    <input type="text" id="username" placeholder="Username">
     <select id="region">
-      <option>NA</option>
-      <option>EU</option>
-      <option>AS</option>
+      <option value="NA">NA</option>
+      <option value="EU">EU</option>
+      <option value="AS">AS</option>
     </select>
-    <label>Skin URL (.png)</label>
-    <input type="url" id="skinUrl" placeholder="https://...png" required>
-    <label>Crystal Tier</label>
-    <input type="text" id="crystalTier" placeholder="e.g., HT1" required>
+    <input type="text" id="skinUrl" placeholder="Minecraft Skin URL">
+    <input type="text" id="crystalTier" placeholder="Crystal Tier">
     <button id="savePlayer">Save</button>
   </div>
 </div>
@@ -161,9 +156,20 @@ const modal = document.getElementById('playerModal');
 const saveBtn = document.getElementById('savePlayer');
 const rankList = document.getElementById('rankList');
 const modalTitle = document.getElementById('modalTitle');
+const adminBtn = document.getElementById('adminBtn');
 
-let editIndex = null; // track if editing
+let editIndex = null;
 
+// Load admin status from localStorage
+let isOwner = localStorage.getItem("isOwner") === "true";
+
+// Toggle button text
+function updateAdminBtn() {
+  adminBtn.textContent = isOwner ? "Logout Admin" : "Admin";
+  addBtn.style.display = isOwner ? "inline-block" : "none";
+}
+
+// Render players
 function renderPlayers() {
   rankList.innerHTML = '';
   const players = JSON.parse(localStorage.getItem('players') || '[]');
@@ -179,7 +185,7 @@ function renderPlayers() {
           <div class="player-name">${player.username} <span class="region">${player.region}</span></div>
         </div>
         <div class="tiers"><div class="tier">${player.tier}</div></div>
-        <div class="actions">
+        <div class="actions" style="display:${isOwner ? 'block' : 'none'}">
           <button onclick="editPlayer(${index})">✏️</button>
           <button onclick="removePlayer(${index})">🗑️</button>
         </div>
@@ -189,6 +195,7 @@ function renderPlayers() {
   }
 }
 
+// Open modal
 function openModal(edit=false){
   modal.style.display='flex';
   if(edit){
@@ -202,6 +209,7 @@ function openModal(edit=false){
   }
 }
 
+// Edit player
 function editPlayer(index){
   const players = JSON.parse(localStorage.getItem('players') || '[]');
   const player = players[index];
@@ -213,6 +221,7 @@ function editPlayer(index){
   openModal(true);
 }
 
+// Remove player
 function removePlayer(index){
   const players = JSON.parse(localStorage.getItem('players') || '[]');
   players.splice(index, 1);
@@ -220,12 +229,15 @@ function removePlayer(index){
   renderPlayers();
 }
 
+// Add button click
 addBtn.addEventListener('click', e=>{
   e.preventDefault();
+  if(!isOwner) return alert("Admin only!");
   editIndex = null;
   openModal(false);
 });
 
+// Save player
 saveBtn.addEventListener('click', ()=>{
   const username = document.getElementById('username').value.trim();
   const region = document.getElementById('region').value;
@@ -248,12 +260,37 @@ saveBtn.addEventListener('click', ()=>{
   editIndex = null;
 });
 
+// Modal close
 modal.addEventListener('click', e=>{
   if(e.target === modal) modal.style.display='none';
 });
 
-// Load players on page start
+// Admin button click
+adminBtn.addEventListener("click", () => {
+  if(isOwner){
+    // Logout
+    localStorage.removeItem("isOwner");
+    isOwner = false;
+    updateAdminBtn();
+    renderPlayers();
+  } else {
+    // Login
+    const pass = prompt("Enter admin password:");
+    if(pass === "clutchadmin112"){
+      localStorage.setItem("isOwner", "true");
+      isOwner = true;
+      updateAdminBtn();
+      renderPlayers();
+    } else {
+      alert("Incorrect password!");
+    }
+  }
+});
+
+// On page load
+updateAdminBtn();
 renderPlayers();
 </script>
+
 </body>
 </html>
