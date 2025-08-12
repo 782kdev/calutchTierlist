@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Leaderboard</title>
+<title>Clutch Tierlist Leaderboard</title>
 <style>
 :root {
   --bg: #0f1117;
@@ -14,7 +14,6 @@
   --eu: #5cb85c;
   --pill-bg: #2c2f3a;
   --text-muted: #aaa;
-  --nav-bg: #1a1d27;
 }
 body {
   background: var(--bg);
@@ -24,85 +23,89 @@ body {
   padding: 0;
 }
 
-/* Nav bar */
+/* Top navigation */
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: var(--nav-bg);
+  background: var(--row-bg);
   padding: 10px 20px;
 }
-
 .logo-text {
   font-size: 20px;
   font-weight: bold;
-  color: var(--gold);
+  color: #4da3ff; /* bright blue */
   letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(77, 163, 255, 0.8), 0 0 12px rgba(77, 163, 255, 0.5);
 }
-
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 15px;
+  margin-left: 30px;
+  gap: 20px;
 }
-
-.category {
-  background: var(--row-bg);
-  padding: 6px 14px;
-  border-radius: 8px;
-  color: var(--gold);
+.nav-links a {
+  color: white;
+  text-decoration: none;
   font-weight: bold;
 }
+.nav-links a:hover {
+  color: var(--gold);
+}
 
+/* Dropdown */
 .dropdown {
   position: relative;
   display: inline-block;
 }
-
-.dropbtn {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-}
-
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: var(--nav-bg);
+  background-color: var(--row-bg);
   min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
   z-index: 1;
+  border-radius: 6px;
 }
-
 .dropdown-content a {
   color: white;
-  padding: 10px 14px;
+  padding: 10px;
   text-decoration: none;
   display: block;
 }
-
 .dropdown-content a:hover {
-  background-color: #222631;
+  background-color: var(--pill-bg);
 }
-
 .dropdown:hover .dropdown-content {
   display: block;
 }
 
-/* Leaderboard styling */
-#leaderboard {
-  padding: 20px;
+/* Category bar */
+.category-bar {
+  display: flex;
+  background: var(--row-bg);
+  padding: 8px 20px;
+  gap: 10px;
+}
+.category {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--pill-bg);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+.category.active {
+  background: var(--gold);
+  color: black;
 }
 
+/* Leaderboard rows */
 .rank-row {
   display: flex;
   align-items: center;
   background: var(--row-bg);
   padding: 10px;
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin: 8px 20px;
 }
 .rank-number {
   font-weight: bold;
@@ -154,18 +157,24 @@ body {
 </head>
 <body>
 
-<!-- Top Nav -->
+<!-- Top Navigation -->
 <div class="navbar">
+  <div class="logo-text">CLUTCH TIERLIST</div>
   <div class="nav-links">
-    <div class="logo-text">CLUTCH TIERLIST</div>
-    <div class="category">Overall</div>
+    <a href="#">Home</a>
+    <a href="#">Rankings</a>
     <div class="dropdown">
-      <button class="dropbtn">Discords ▼</button>
+      <a href="#">Discords ▼</a>
       <div class="dropdown-content">
         <a href="https://discord.gg/6S6cq6eGR7" target="_blank">Vanilla</a>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Category Bar -->
+<div class="category-bar">
+  <div class="category active">Overall</div>
 </div>
 
 <!-- Leaderboard -->
