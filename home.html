@@ -224,4 +224,66 @@ function editPlayer(index){
   editIndex = index;
   document.getElementById('username').value=player.username;
   document.getElementById('region').value=player.region;
-  document.getEleme
+  document.getElementById('skinUrl').value=player.skinUrl;
+  document.getElementById('crystalTier').value=player.tier;
+  openModal(true);
+}
+
+function removePlayer(index){
+  const players = JSON.parse(localStorage.getItem('players') || '[]');
+  players.splice(index, 1);
+  localStorage.setItem('players', JSON.stringify(players));
+  renderPlayers();
+}
+
+function showDetails(player){
+  detailsSkin.src = player.skinUrl;
+  detailsName.textContent = player.username;
+  detailsRegion.textContent = player.region;
+  detailsModal.style.display = 'flex';
+}
+
+function closeDetails(){
+  detailsModal.style.display = 'none';
+}
+
+addBtn.addEventListener('click', e=>{
+  e.preventDefault();
+  editIndex = null;
+  openModal(false);
+});
+
+saveBtn.addEventListener('click', ()=>{
+  const username = document.getElementById('username').value.trim();
+  const region = document.getElementById('region').value;
+  const skinUrl = document.getElementById('skinUrl').value.trim();
+  const tier = document.getElementById('crystalTier').value.trim();
+
+  if(!username || !skinUrl || !tier) return alert('Please fill all fields');
+
+  const players = JSON.parse(localStorage.getItem('players') || '[]');
+
+  if(editIndex !== null){
+    players[editIndex] = {username, region, skinUrl, tier};
+  } else {
+    players.push({username, region, skinUrl, tier});
+  }
+  localStorage.setItem('players', JSON.stringify(players));
+
+  renderPlayers();
+  modal.style.display='none';
+  editIndex = null;
+});
+
+modal.addEventListener('click', e=>{
+  if(e.target === modal) modal.style.display='none';
+});
+detailsModal.addEventListener('click', e=>{
+  if(e.target === detailsModal) detailsModal.style.display='none';
+});
+
+// Load players on page start
+renderPlayers();
+</script>
+</body>
+</html>
