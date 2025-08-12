@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Clutch Tierlist</title>
+<title>Leaderboard</title>
 <style>
 :root {
   --bg: #0f1117;
-  --nav-bg: #151821;
   --row-bg: #181b23;
   --gold: #ffcc33;
   --silver: #c0c0c0;
@@ -15,89 +14,95 @@
   --eu: #5cb85c;
   --pill-bg: #2c2f3a;
   --text-muted: #aaa;
-  --accent: #00d4ff;
+  --nav-bg: #1a1d27;
 }
 body {
-  margin: 0;
   background: var(--bg);
   color: white;
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Top navigation */
+/* Nav bar */
 .navbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   background: var(--nav-bg);
-  padding: 8px 16px;
-}
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.logo-text {
-  font-size: 26px;
-  font-weight: bold;
-  color: var(--accent);
-  font-family: 'Trebuchet MS', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0px 0px 8px var(--accent);
-}
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  margin-right: 15px;
-}
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.search {
-  padding: 5px 8px;
-  border-radius: 6px;
-  border: none;
-}
-.info-btn {
-  background: #222631;
-  padding: 5px 10px;
-  border-radius: 6px;
-}
-.server-ip {
-  background: #222631;
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 10px 20px;
 }
 
-/* Category bar */
-.categories {
-  display: flex;
-  background: var(--row-bg);
-  padding: 6px 12px;
-  gap: 12px;
+.logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--gold);
+  letter-spacing: 1px;
 }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .category {
+  background: var(--row-bg);
   padding: 6px 14px;
   border-radius: 8px;
-  cursor: pointer;
-  background: #222631;
-}
-.category.active {
-  background: #1d2230;
-  border-bottom: 2px solid var(--accent);
+  color: var(--gold);
+  font-weight: bold;
 }
 
-/* Leaderboard styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--nav-bg);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 10px 14px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #222631;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Leaderboard styling */
+#leaderboard {
+  padding: 20px;
+}
+
 .rank-row {
   display: flex;
   align-items: center;
   background: var(--row-bg);
   padding: 10px;
   border-radius: 8px;
-  margin: 8px 12px;
+  margin-bottom: 8px;
 }
 .rank-number {
   font-weight: bold;
@@ -121,7 +126,7 @@ body {
 .player-name {
   font-weight: bold;
 }
-.points {
+.player-title {
   font-size: 12px;
   color: var(--text-muted);
 }
@@ -149,27 +154,18 @@ body {
 </head>
 <body>
 
-<!-- Nav bar -->
+<!-- Top Nav -->
 <div class="navbar">
-  <div class="nav-left">
-    <div class="logo-text">Clutch Tierlist</div>
-    <div class="nav-links">
-      <a href="#">Home</a>
-      <a href="#">Rankings</a>
-      <a href="#">Discords</a>
+  <div class="nav-links">
+    <div class="logo-text">CLUTCH TIERLIST</div>
+    <div class="category">Overall</div>
+    <div class="dropdown">
+      <button class="dropbtn">Discords ▼</button>
+      <div class="dropdown-content">
+        <a href="https://discord.gg/6S6cq6eGR7" target="_blank">Vanilla</a>
+      </div>
     </div>
   </div>
-  <div class="nav-right">
-    <input type="text" class="search" placeholder="Search player...">
-    <div class="info-btn">Information</div>
-    <div class="server-ip">mcpvp.club</div>
-  </div>
-</div>
-
-<!-- Categories -->
-<div class="categories">
-  <div class="category active">Overall</div>
-  <div class="category">Vanilla</div>
 </div>
 
 <!-- Leaderboard -->
@@ -193,6 +189,7 @@ const players = [
   },
   {
     name: "ClemintimeMan",
+    title: "Combat Master",
     points: 2,
     region: "NA",
     avatar: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&headOnly=true&ratio=50",
@@ -219,7 +216,7 @@ players.forEach((p, i) => {
   
   const info = document.createElement("div");
   info.className = "player-info";
-  info.innerHTML = `<div class="player-name">${p.name}</div><div class="points">(${p.points} points)</div>`;
+  info.innerHTML = `<div class="player-name">${p.name}</div><div class="player-title">${p.title || ''} (${p.points} points)</div>`;
   
   const region = document.createElement("div");
   region.className = `region ${p.region.toLowerCase()}`;
