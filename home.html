@@ -15,7 +15,6 @@ body {
   background: var(--bg);
   color: white;
   margin: 0;
-  padding: 0;
 }
 .header {
   display: flex;
@@ -75,36 +74,78 @@ body {
   padding: 12px;
   color: var(--muted);
 }
+#adminBtn {
+  padding: 6px 10px;
+  background: #444;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+#adminPanel {
+  display: none;
+  background: var(--card-bg);
+  padding: 15px;
+}
+textarea {
+  width: 100%;
+  height: 100px;
+  background: #111;
+  color: #0f0;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+}
+button.copy {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  background: green;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
 </style>
 </head>
 <body>
+
 <div class="header">
   <h1>Leaderboard</h1>
   <div class="search"><input type="text" placeholder="Search player..."></div>
+  <button id="adminBtn">Admin</button>
 </div>
+
+<div id="adminPanel">
+  <h3>Generate Player Object</h3>
+  <input type="text" id="genName" placeholder="Username"><br><br>
+  <input type="text" id="genRegion" placeholder="Region (NA, EU...)"><br><br>
+  <input type="text" id="genTier" placeholder="Tier (HT1-LT5)"><br><br>
+  <button id="genBtn">Generate</button>
+  <textarea id="genOutput" readonly></textarea>
+  <button class="copy" id="copyBtn">Copy</button>
+  <button id="closeAdmin">Close</button>
+</div>
+
 <div class="rank-list" id="rankList"></div>
 <div id="noResults" style="display:none;">Player does not exist</div>
 
 <script>
-// Easy to edit player list
+// Player list
 const players = [
   { username: "intalic", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "HT3" },
   { username: "SupremeCreeeem", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=c0f3cff0-29fe-43a6-b430-b6643e22daaf&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "LT3" },
   { username: "ClemintimeMan", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "HT5" }
 ];
 
-// Tier priority
-const tierOrder = ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"];
-
-// Sort players by tier order
+// Tier sorting
+const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
 players.sort((a, b) => tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier));
 
-// DOM elements
 const rankList = document.getElementById('rankList');
 const searchInput = document.querySelector('.search input');
 const noResults = document.getElementById('noResults');
 
-// Function to render leaderboard
+// Render leaderboard
 function renderLeaderboard(list) {
   rankList.innerHTML = '';
   if (list.length === 0) {
@@ -126,11 +167,9 @@ function renderLeaderboard(list) {
     rankList.appendChild(row);
   });
 }
-
-// Initial display
 renderLeaderboard(players);
 
-// Search functionality
+// Search
 searchInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
     const query = searchInput.value.trim().toLowerCase();
@@ -141,6 +180,55 @@ searchInput.addEventListener('keydown', function(e) {
     const filtered = players.filter(p => p.username.toLowerCase() === query);
     renderLeaderboard(filtered);
   }
+});
+
+// Admin password logic
+const adminBtn = document.getElementById('adminBtn');
+const adminPanel = document.getElementById('adminPanel');
+const closeAdmin = document.getElementById('closeAdmin');
+
+adminBtn.addEventListener('click', () => {
+  const pass = prompt("Enter admin password:");
+  if (pass === "782k") {
+    adminBtn.style.display = 'none';
+    adminPanel.style.display = 'block';
+  } else {
+    alert("Wrong password.");
+  }
+});
+closeAdmin.addEventListener('click', () => {
+  adminPanel.style.display = 'none';
+  adminBtn.style.display = 'inline-block';
+});
+
+// Generate player object
+document.getElementById('genBtn').addEventListener('click', async () => {
+  const name = document.getElementById('genName').value.trim();
+  const region = document.getElementById('genRegion').value.trim();
+  const tier = document.getElementById('genTier').value.trim();
+  if (!name || !region || !tier) {
+    alert("Fill all fields.");
+    return;
+  }
+  try {
+    const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${name}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const uuid = data.id;
+    const skinUrl = `https://render.skinmc.net/3d.php?user=${uuid}&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50`;
+    const obj = `{ username: "${name}", region: "${region}", skinUrl: "${skinUrl}", tier: "${tier}" }`;
+    document.getElementById('genOutput').value = obj;
+  } catch {
+    alert("Player not found on Mojang.");
+  }
+});
+
+// Copy
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const output = document.getElementById('genOutput');
+  output.select();
+  document.execCommand('copy');
+  alert("Copied to clipboard!");
 });
 </script>
 </body>
