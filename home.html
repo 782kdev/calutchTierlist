@@ -2,155 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Player Leaderboard</title>
+<title>Leaderboard</title>
 <style>
 :root {
-  --bg: #1c1f26;
-  --card-bg: #232732;
-  --pill-bg: #2e3440;
-  --muted: #9aa6b2;
-  --na: #4caf50;
-  --eu: #f44336;
-  --as: #2196f3;
+  --bg: #0f1117;
+  --row-bg: #181b23;
+  --gold: #ffcc33;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+  --na: #d9534f;
+  --eu: #5cb85c;
+  --pill-bg: #2c2f3a;
+  --text-muted: #aaa;
 }
 body {
-  font-family: Arial, sans-serif;
   background: var(--bg);
   color: white;
+  font-family: Arial, sans-serif;
   margin: 0;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--card-bg);
-  padding: 12px 20px;
-}
-.header h1 {
-  margin: 0;
-  font-size: 20px;
-}
-.search input {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
-}
-.rank-list {
   padding: 20px;
 }
 .rank-row {
   display: flex;
   align-items: center;
-  background: var(--card-bg);
-  margin-bottom: 10px;
+  background: var(--row-bg);
   padding: 10px;
   border-radius: 8px;
+  margin-bottom: 8px;
 }
 .rank-number {
+  font-weight: bold;
   width: 40px;
   text-align: center;
-  font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
+  border-radius: 4px;
 }
+.rank-number.gold { background: var(--gold); color: black; }
+.rank-number.silver { background: var(--silver); color: black; }
+.rank-number.bronze { background: var(--bronze); color: black; }
 .avatar img {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
 }
-.player-meta {
+.player-info {
   flex: 1;
-  margin-left: 12px;
+  margin-left: 10px;
 }
 .player-name {
   font-weight: bold;
-  font-size: 16px;
+}
+.player-title {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 .region {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-top: 4px;
-  color: white;
-}
-.region.na { background-color: var(--na); }
-.region.eu { background-color: var(--eu); }
-.region.as { background-color: var(--as); }
-.tiers .tier {
-  background: var(--pill-bg);
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
   font-size: 12px;
+  font-weight: bold;
+  color: white;
+  margin-right: 10px;
 }
-#noResults {
-  text-align: center;
-  padding: 12px;
-  color: var(--muted);
+.region.na { background: var(--na); }
+.region.eu { background: var(--eu); }
+.tiers {
+  display: flex;
+  gap: 4px;
+}
+.tier {
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--pill-bg);
 }
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>Leaderboard</h1>
-  <div class="search"><input type="text" placeholder="Search player..."></div>
-</div>
-<div class="rank-list" id="rankList"></div>
-<div id="noResults" style="display:none;">Player does not exist</div>
+
+<div id="leaderboard"></div>
 
 <script>
-// Player list
 const players = [
-  { username: "intalic", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "HT3" },
-  { username: "SupremeCreeeem", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=c0f3cff0-29fe-43a6-b430-b6643e22daaf&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "LT3" },
-  { username: "ClemintimeMan", region: "NA", skinUrl: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&vr=-10&hr0&hrh=25&aa=&headOnly=true&ratio=50", tier: "HT5" }
+  {
+    name: "Marlowww",
+    title: "Combat Grandmaster",
+    points: 405,
+    region: "NA",
+    avatar: "https://render.skinmc.net/3d.php?user=8348b2fd-039f-46de-be0c-b59bcf634a60&headOnly=true&ratio=50",
+    tiers: ["HT1","HT1","HT1","LT1","LT1","LT1"]
+  },
+  {
+    name: "ItzRealMe",
+    title: "Combat Master",
+    points: 330,
+    region: "NA",
+    avatar: "https://render.skinmc.net/3d.php?user=c0f3cff0-29fe-43a6-b430-b6643e22daaf&headOnly=true&ratio=50",
+    tiers: ["HT1","HT1","HT2","LT2","LT2","LT2"]
+  },
+  {
+    name: "Swight",
+    title: "Combat Master",
+    points: 260,
+    region: "NA",
+    avatar: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&headOnly=true&ratio=50",
+    tiers: ["HT1","LT2","LT2","LT3","HT3","LT1"]
+  }
 ];
 
-// Tier order
-const tierOrder = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
+const leaderboard = document.getElementById("leaderboard");
 
-// Sort by tier
-players.sort((a, b) => tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier));
-
-const rankList = document.getElementById('rankList');
-const searchInput = document.querySelector('.search input');
-const noResults = document.getElementById('noResults');
-
-function renderLeaderboard(list) {
-  rankList.innerHTML = '';
-  if (list.length === 0) {
-    noResults.style.display = 'block';
-    return;
-  }
-  noResults.style.display = 'none';
-  list.forEach((player, index) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    row.innerHTML = `
-      <div class="rank-number">${index + 1}</div>
-      <div class="avatar"><img src="${player.skinUrl}" alt="${player.username} skin"></div>
-      <div class="player-meta">
-        <div class="player-name">${player.username}</div>
-        <div class="region ${player.region.toLowerCase()}">${player.region}</div>
-      </div>
-      <div class="tiers"><div class="tier">${player.tier}</div></div>
-    `;
-    rankList.appendChild(row);
+players.forEach((p, i) => {
+  const row = document.createElement("div");
+  row.className = "rank-row";
+  
+  const rankNum = document.createElement("div");
+  rankNum.className = "rank-number";
+  if (i === 0) rankNum.classList.add("gold");
+  else if (i === 1) rankNum.classList.add("silver");
+  else if (i === 2) rankNum.classList.add("bronze");
+  rankNum.textContent = i + 1;
+  
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.innerHTML = `<img src="${p.avatar}">`;
+  
+  const info = document.createElement("div");
+  info.className = "player-info";
+  info.innerHTML = `<div class="player-name">${p.name}</div><div class="player-title">${p.title} (${p.points} points)</div>`;
+  
+  const region = document.createElement("div");
+  region.className = `region ${p.region.toLowerCase()}`;
+  region.textContent = p.region;
+  
+  const tiers = document.createElement("div");
+  tiers.className = "tiers";
+  p.tiers.forEach(t => {
+    const tier = document.createElement("div");
+    tier.className = "tier";
+    tier.textContent = t;
+    tiers.appendChild(tier);
   });
-}
-
-renderLeaderboard(players);
-
-searchInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) {
-      renderLeaderboard(players);
-      return;
-    }
-    const filtered = players.filter(p => p.username.toLowerCase() === query);
-    renderLeaderboard(filtered);
-  }
+  
+  row.appendChild(rankNum);
+  row.appendChild(avatar);
+  row.appendChild(info);
+  row.appendChild(region);
+  row.appendChild(tiers);
+  
+  leaderboard.appendChild(row);
 });
 </script>
+
 </body>
 </html>
