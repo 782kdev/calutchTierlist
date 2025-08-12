@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MC TIERS UI</title>
+<style>
+    body {
+        background-color: #0f1218;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+    /* Navbar */
+    .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background-color: #0f1218;
+    }
+    .navbar-left img {
+        height: 40px;
+    }
+    .navbar-center a {
+        color: white;
+        margin: 0 15px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .navbar-right input {
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+    }
+    /* Tabs */
+    .tabs {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        background-color: #121621;
+    }
+    .tab {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: transparent;
+    }
+    .tab.active {
+        background-color: #1e2433;
+        border-bottom: 3px solid orange;
+    }
+    /* Server Info */
+    .server-info {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        background-color: #10141f;
+    }
+    .info-btn {
+        background-color: #1f2536;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="navbar-left">
+        <img src="logo.png" alt="MC TIERS Logo">
+    </div>
+    <div class="navbar-center">
+        <a href="#">Home</a>
+        <a href="#">Rankings</a>
+        <a href="#">Discords ▼</a>
+    </div>
+    <div class="navbar-right">
+        <input type="text" placeholder="Search player...">
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+    <div class="tab active">🏆 Overall</div>
+    <div class="tab">👾 LTMs</div>
+    <div class="tab">🔮 Vanilla</div>
+    <div class="tab">❤️ UHC</div>
+    <div class="tab">🧪 Pot</div>
+    <div class="tab">🐘 NethOP</div>
+    <div class="tab">🟢 SMP</div>
+    <div class="tab">🗡 Sword</div>
+    <div class="tab">🔨 Axe</div>
+    <div class="tab">⚒ Mace</div>
+</div>
+
+<!-- Server Info -->
+<div class="server-info">
+    <div class="info-btn">ℹ Information</div>
+    <div class="info-btn">PVP CLUB</div>
+    <div class="info-btn">mcpvp.club</div>
+    <div class="info-btn">💬</div>
+</div>
+
+</body>
+</html>
