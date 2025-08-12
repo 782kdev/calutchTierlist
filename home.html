@@ -15,6 +15,7 @@
   --eu: #5cb85c;
   --pill-bg: #2c2f3a;
   --text-muted: #aaa;
+  --accent: #00d4ff;
 }
 body {
   margin: 0;
@@ -36,8 +37,14 @@ body {
   align-items: center;
   gap: 20px;
 }
-.nav-left img.logo {
-  height: 50px;
+.logo-text {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--accent);
+  font-family: 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0px 0px 8px var(--accent);
 }
 .nav-links a {
   color: white;
@@ -73,19 +80,14 @@ body {
   gap: 12px;
 }
 .category {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  padding: 6px 14px;
   border-radius: 8px;
   cursor: pointer;
-}
-.category img {
-  height: 20px;
+  background: #222631;
 }
 .category.active {
   background: #1d2230;
-  border-bottom: 2px solid #ffcc33;
+  border-bottom: 2px solid var(--accent);
 }
 
 /* Leaderboard styles */
@@ -150,7 +152,7 @@ body {
 <!-- Nav bar -->
 <div class="navbar">
   <div class="nav-left">
-    <img src="logo.png" class="logo" alt="Clutch Tierlist Logo">
+    <div class="logo-text">Clutch Tierlist</div>
     <div class="nav-links">
       <a href="#">Home</a>
       <a href="#">Rankings</a>
@@ -166,14 +168,8 @@ body {
 
 <!-- Categories -->
 <div class="categories">
-  <div class="category active">
-    <img src="icons/overall.png" alt="Overall">
-    <span>Overall</span>
-  </div>
-  <div class="category">
-    <img src="icons/vanilla.png" alt="Vanilla">
-    <span>Vanilla</span>
-  </div>
+  <div class="category active">Overall</div>
+  <div class="category">Vanilla</div>
 </div>
 
 <!-- Leaderboard -->
