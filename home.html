@@ -52,7 +52,7 @@ body {
 .player-name {
   font-weight: bold;
 }
-.player-title {
+.points {
   font-size: 12px;
   color: var(--text-muted);
 }
@@ -100,7 +100,6 @@ const players = [
   },
   {
     name: "ClemintimeMan",
-    title: "Combat Master",
     points: 2,
     region: "NA",
     avatar: "https://render.skinmc.net/3d.php?user=9189512a-ddf9-4e49-a181-3a142f8f9d4b&headOnly=true&ratio=50",
@@ -127,7 +126,7 @@ players.forEach((p, i) => {
   
   const info = document.createElement("div");
   info.className = "player-info";
-  info.innerHTML = `<div class="player-name">${p.name}</div><div class="player-title">${p.title} (${p.points} points)</div>`;
+  info.innerHTML = `<div class="player-name">${p.name}</div><div class="points">(${p.points} points)</div>`;
   
   const region = document.createElement("div");
   region.className = `region ${p.region.toLowerCase()}`;
